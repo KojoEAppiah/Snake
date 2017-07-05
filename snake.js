@@ -1,8 +1,8 @@
 var PIECE_SIZE = 10;
 var HEIGHT = 300;
 var WIDTH = 450;
-var BLACK = "#FFFFFF";
-var WHITE = "#0000FF";
+var BLACK = "#0F0000";
+var WHITE = "#FFFFFF";
 var canvas, ctx;
 
 var LEFT = 0;
@@ -36,6 +36,7 @@ var snake_length = 0;
 var snake_dir = UP;
 
 var init = function() {
+
  	head = new node(200, 2*(HEIGHT/3));
 	iter = head;
 	for(var i = 0; i < 14; i++){
@@ -48,23 +49,29 @@ var init = function() {
 	tail = iter;
 }
 
+
 var printSnake = function(color) {
+
 	iter = head;
 	ctx.fillStyle = color;
 	while(iter.next != null){
 /*		ctx.beginPath();
 		ctx.arc(iter.x+PIECE_SIZE/2, iter.y+PIECE_SIZE/2,PIECE_SIZE/2,0,2*Math.PI);
 		ctx.stroke();		*/
-		ctx.fillRect(iter.x, iter.y, PIECE_SIZE, PIECE_SIZE);
-		ctx.strokeRect(iter.x, iter.y, PIECE_SIZE, PIECE_SIZE);
+		if(color === WHITE){
+			ctx.fillRect(iter.x, iter.y, PIECE_SIZE, PIECE_SIZE);
+			ctx.strokeRect(iter.x, iter.y, PIECE_SIZE, PIECE_SIZE);
+		}
+		else
+			ctx.fillRect(iter.x-1, iter.y-1, PIECE_SIZE+2, PIECE_SIZE+2);
+
 		iter = iter.next;
 	}
 }
 
 var mainLoop = function() {
 
-	printSnake(WHITE);
-	i = 0;
+	printSnake(BLACK);
 
 	iter = tail;
 	while(iter.prev != null) { //move each piece to the previous position of the piece in front of it
@@ -73,7 +80,6 @@ var mainLoop = function() {
 		iter = iter.prev;
 	}
 
-	printSnake(BLACK);
 	switch(direction) {
 		case UP:
 			head.y -= PIECE_SIZE;
@@ -115,6 +121,7 @@ var mainLoop = function() {
 		}
 	}
 
+	var i = 0;
 	//check the bounaries of the head against the bounaries of the food.
 	if(((head.x >= foods[i].x && head.x <= foods[i].x+PIECE_SIZE-1) || (head.x+PIECE_SIZE-1 >= foods[i].x && head.x+PIECE_SIZE-1 <= foods[i].x+PIECE_SIZE-1))
 	 && ((head.y >= foods[i].y && head.y <= foods[i].y+PIECE_SIZE-1) || (head.y+PIECE_SIZE-1 >= foods[i].y && head.y+PIECE_SIZE-1 <= foods[i].y+PIECE_SIZE-1))) {//yum!
@@ -122,21 +129,23 @@ var mainLoop = function() {
 		tail.next.prev = tail;
 		tail = tail.next;
 		console.log("FOOOOD  " + snake_length++);
-		ctx.fillStyle = WHITE;
+		ctx.fillStyle = BLACK;
 		ctx.fillRect(foods[i].x, foods[i].y, PIECE_SIZE, PIECE_SIZE);
 		addFood();
 	}
 
-	printSnake(BLACK);
+	printSnake(WHITE);
 	if(!over){
 		setTimeout(function(){ mainLoop()}, 100);
 	}
 }
 
+
 var GameOver = function() {
 	console.log("Baaaaaaaa");
 	over = true;
 }
+
 
 var addFood = function() {
 
@@ -195,6 +204,7 @@ window.onkeydown = function(e) {
 	}
 }
 
+
 var main = function() {
 	canvas = document.getElementById("canvas");
 	ctx = canvas.getContext("2d");
@@ -203,8 +213,7 @@ var main = function() {
 
 	WIDTH = canvas.width;
 	HEIGHT = canvas.height;
-	ctx.fillStyle = "#FF00F0";
-//	ctx.fillRect(30,200, 150, 200);
+
 
 	init();
 	printSnake(BLACK);
@@ -219,5 +228,6 @@ var main = function() {
 	mainLoop();
 
 }
+
 
 $(document).ready(main);
