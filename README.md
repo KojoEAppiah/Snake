@@ -1,2 +1,2 @@
 # Snake
-To run download the files and open index.html.
+To run: download the files and open index.html.
